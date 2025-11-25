@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HireShield • Fake Job Detection</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root[data-theme="dark"] {
+      --bg:#020712;
+      --surface:#050b18;
+      --card:#071822;
+      --accent:#22c55e;
+      --accent-soft:#16a34a;
+      --text:#e5f9ed;
+      --muted:#7bbf8e;
+      --border:#123527;
+      --hover:#16a34a;
+      --fake:#f97316;
+      --real:#22c55e;
+    }
+    :root[data-theme="light"] {
+      --bg:#f4fbf7;
+      --surface:#ffffff;
+      --card:#e3f3e9;
+      --accent:#16a34a;
+      --accent-soft:#22c55e;
+      --text:#052e16;
+      --muted:#4b7c5b;
+      --border:#b6e0c2;
+      --hover:#15803d;
+      --fake:#ea580c;
+      --real:#16a34a;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:"Inter",sans-serif; background:var(--bg); color:var(--text); transition:background .3s, color .3s; }
+    h1,h2,h3,.brand { font-family:"Poppins",sans-serif; }
+    .header { background:var(--surface); border-bottom:1px solid var(--border); padding:14px 24px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; box-shadow:0 10px 30px rgba(0,0,0,.36); }
+    .header .brand { font-size:20px; font-weight:600; color:var(--accent); display:flex; align-items:center; gap:8px; letter-spacing:.4px; }
+    .brand span { font-size:22px; }
+    .header nav { display:flex; gap:10px; align-items:center; }
+    .header a { text-decoration:none; }
+    .btn { padding:9px 16px; border:none; border-radius:999px; font-weight:600; font-size:13px; cursor:pointer; transition:.2s; font-family:"Inter",sans-serif; }
+    .btn-primary { background:var(--accent); color:#fff; box-shadow:0 6px 18px rgba(34,197,94,.35); }
+    .btn-primary:hover { background:var(--hover); transform:translateY(-1px); }
+    .btn-secondary { background:transparent; color:var(--text); border:1px solid var(--border); }
+    .btn-secondary:hover { background:var(--card); }
+    .btn-danger { background:var(--fake); color:#fff; }
+    .btn-danger:hover { opacity:.9; }
+    .theme-toggle { background:transparent; border:1px solid var(--border); padding:7px 11px; border-radius:999px; cursor:pointer; font-size:18px; color:var(--muted); transition:.2s; }
+    .theme-toggle:hover { background:var(--card); color:var(--accent); }
+    .container { max-width:900px; margin:0 auto; padding:32px 20px 40px; }
+    h1 { font-size:30px; margin-bottom:10px; text-align:center; font-weight:600; }
+    .subtitle { text-align:center; color:var(--muted); margin-bottom:28px; font-size:13px; letter-spacing:.28em; text-transform:uppercase; font-family:"Poppins",sans-serif; }
+    .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:18px; margin-bottom:28px; }
+    .stat-card { background:linear-gradient(135deg,rgba(22,163,74,.06),rgba(15,118,110,.12)); padding:18px 18px 16px; border-radius:18px; border:1px solid var(--border); box-shadow:0 16px 40px rgba(0,0,0,.45); position:relative; overflow:hidden; }
+    .stat-card::after { content:""; position:absolute; inset:auto -40px -40px auto; width:120px; height:120px; background:radial-gradient(circle at center,rgba(34,197,94,.35),transparent 60%); opacity:.6; }
+    .stat-label { font-size:11px; text-transform:uppercase; letter-spacing:.7px; color:var(--muted); margin-bottom:4px; font-weight:500; }
+    .stat-value { font-size:26px; font-weight:700; position:relative; z-index:1; }
+    .last-pred { background:var(--surface); padding:22px 22px 20px; border-radius:18px; border:1px solid var(--border); margin-bottom:28px; box-shadow:0 18px 45px rgba(0,0,0,.6); }
+    .last-pred h3 { margin-bottom:10px; font-size:17px; display:flex; align-items:center; gap:8px; }
+    .last-pred h3 span { font-size:18px; }
+    .badge { display:inline-block; padding:7px 16px; border-radius:999px; font-weight:600; font-size:13px; color:#fff; }
+    .badge.fake { background:linear-gradient(135deg,var(--fake),#fb923c); }
+    .badge.real { background:linear-gradient(135deg,var(--real),#4ade80); }
+    progress { width:100%; height:10px; margin:8px 0; border-radius:999px; }
+    progress::-webkit-progress-bar { background:var(--card); border-radius:999px; }
+    progress::-webkit-progress-value { background:var(--accent); border-radius:999px; }
+    progress::-moz-progress-bar { background:var(--accent); border-radius:999px; }
+    details { margin-top:10px; cursor:pointer; }
+    summary { font-size:14px; color:var(--accent-soft); }
+    .form-card { background:var(--surface); padding:24px 24px 26px; border-radius:18px; border:1px solid var(--border); margin-bottom:26px; box-shadow:0 18px 45px rgba(0,0,0,.6); }
+    label { font-weight:600; font-size:14px; display:block; margin-bottom:8px; }
+    textarea { width:100%; min-height:140px; padding:12px; font-size:14px; border:1px solid var(--border); border-radius:14px; background:var(--bg); color:var(--text); resize:vertical; font-family:inherit; }
+    textarea:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 1px rgba(34,197,94,.7); }
+    .error { background:rgba(220,38,38,.08); border:1px solid var(--fake); color:var(--fake); padding:11px 14px; border-radius:12px; margin-top:12px; font-size:13px; }
+    .tips { background:var(--surface); padding:22px 24px; border-radius:18px; border-left:4px solid var(--accent); margin-bottom:26px; box-shadow:0 18px 45px rgba(0,0,0,.6); }
+    .tips h3 { margin-bottom:10px; font-size:17px; display:flex; align-items:center; gap:8px; }
+    .tips h3 span { font-size:18px; }
+    .tips ul { padding-left:18px; line-height:1.6; }
+    .tips li { margin-bottom:6px; font-size:13px; color:var(--text); }
+    footer { text-align:center; padding:22px; color:var(--muted); font-size:12px; border-top:1px solid rgba(12,148,136,.15); margin-top:10px; font-family:"Poppins",sans-serif; }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="brand"><span>🛡️</span>HireShield</div>
+    <nav>
+      <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">🌓</button>
+      {% if session.admin_logged_in %}
+        <a href="{{ url_for('admin_dashboard') }}"><button class="btn btn-secondary">Dashboard</button></a>
+        <a href="{{ url_for('history') }}"><button class="btn btn-secondary">History</button></a>
+        <a href="{{ url_for('logout') }}"><button class="btn btn-danger">Logout</button></a>
+      {% else %}
+        <a href="{{ url_for('admin_login') }}"><button class="btn btn-primary">Admin Login</button></a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <div class="container">
+    <h1>Fake Job Posting Detector</h1>
+    <p class="subtitle">AI-powered analysis to identify fraudulent job listings</p>
+
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-label">Total Analyzed</div>
+        <div class="stat-value">{{ (fake|default(0)) + (real|default(0)) }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Fake Detected</div>
+        <div class="stat-value" style="color:var(--fake);">{{ fake|default(0) }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Real Verified</div>
+        <div class="stat-value" style="color:var(--real);">{{ real|default(0) }}</div>
+      </div>
+    </div>
+
+    {% if last_label %}
+    <div class="last-pred">
+      <h3><span>📌</span>Last Prediction</h3>
+      <span class="badge {{ 'fake' if last_label == 'Fake Job' else 'real' }}">{{ last_label }}</span>
+      <div style="margin-top:12px;">
+        <small style="color:var(--muted);">Confidence</small>
+        <progress value="{{ last_confidence }}" max="100"></progress>
+        <div style="text-align:right;font-size:12px;color:var(--muted);">{{ last_confidence }}%</div>
+      </div>
+      <details>
+        <summary>View description</summary>
+        <div style="margin-top:10px;font-size:13px;color:var(--muted);white-space:pre-wrap;">{{ last_text }}</div>
+      </details>
+    </div>
+    {% endif %}
+
+    <div class="form-card">
+      <form action="/predict" method="POST">
+        <label for="job_description">Enter Job Description</label>
+        <textarea name="job_description" id="job_description" placeholder="Paste the job posting text here..." required></textarea>
+        <button type="submit" class="btn btn-primary" style="margin-top:14px;width:100%;">Analyze Job Posting</button>
+        {% if error %}
+        <div class="error">⚠ {{ error }}</div>
+        {% endif %}
+      </form>
+    </div>
+
+    <div class="tips">
+      <h3><span>🧭</span>Tips to Spot Fake Jobs</h3>
+      <ul>
+        <li>Unrealistic salary or "get rich quick" promises</li>
+        <li>Request for upfront payment (training, equipment)</li>
+        <li>Generic email addresses (Gmail, Yahoo) for official communication</li>
+        <li>High-pressure tactics ("Apply now! Limited spots!")</li>
+        <li>Vague job descriptions with poor grammar</li>
+        <li>Early requests for personal documents (ID, bank details)</li>
+      </ul>
+    </div>
+  </div>
+
+  <footer>© 2025 • HireShield • Designed by Ashwin T</footer>
+
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const current = html.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+    }
+    const saved = localStorage.getItem('theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', saved);
+  </script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HireShield • Prediction Result</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root[data-theme="dark"] {
+      --bg:#020712;
+      --surface:#050b18;
+      --card:#071822;
+      --accent:#22c55e;
+      --text:#e5f9ed;
+      --muted:#7bbf8e;
+      --border:#123527;
+      --hover:#16a34a;
+      --fake:#f97316;
+      --real:#22c55e;
+    }
+    :root[data-theme="light"] {
+      --bg:#f4fbf7;
+      --surface:#ffffff;
+      --card:#e3f3e9;
+      --accent:#16a34a;
+      --text:#052e16;
+      --muted:#4b7c5b;
+      --border:#b6e0c2;
+      --hover:#15803d;
+      --fake:#ea580c;
+      --real:#16a34a;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:"Inter",sans-serif; background:radial-gradient(circle at top,rgba(34,197,94,.16),transparent 60%), var(--bg); color:var(--text); transition:background .3s, color .3s; }
+    h1,.brand { font-family:"Poppins",sans-serif; }
+    .header { background:var(--surface); border-bottom:1px solid var(--border); padding:14px 24px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; box-shadow:0 18px 45px rgba(0,0,0,.7); }
+    .header .brand { font-size:20px; font-weight:600; color:var(--accent); letter-spacing:.3px; display:flex; align-items:center; gap:8px; }
+    .header nav { display:flex; gap:10px; align-items:center; }
+    .btn { padding:9px 16px; border:none; border-radius:999px; font-weight:600; font-size:13px; cursor:pointer; transition:.2s; text-decoration:none; display:inline-block; font-family:"Inter",sans-serif; }
+    .btn-primary { background:var(--accent); color:#fff; box-shadow:0 12px 32px rgba(34,197,94,.4); }
+    .btn-primary:hover { background:var(--hover); }
+    .btn-secondary { background:transparent; color:var(--text); border:1px solid var(--border); }
+    .btn-danger { background:var(--fake); color:#fff; border:1px solid var(--fake); }
+    .theme-toggle { background:transparent; border:1px solid var(--border); padding:7px 11px; border-radius:999px; cursor:pointer; font-size:18px; color:var(--muted); transition:.2s; }
+    .theme-toggle:hover { background:var(--card); color:var(--accent); }
+    .container { max-width:800px; margin:34px auto; padding:0 24px 40px; }
+    .result-card { background:var(--surface); padding:30px 28px; border-radius:22px; border:1px solid var(--border); text-align:center; margin-bottom:22px; box-shadow:0 22px 60px -22px rgba(0,0,0,.9); }
+    h1 { font-size:26px; margin-bottom:6px; font-weight:600; }
+    .badge { display:inline-block; padding:11px 22px; border-radius:999px; font-weight:700; font-size:17px; color:#fff; margin:18px 0; font-family:"Poppins",sans-serif; }
+    .badge.fake { background:linear-gradient(135deg,var(--fake),#fb923c); }
+    .badge.real { background:linear-gradient(135deg,var(--real),#4ade80); }
+    progress { width:100%; height:14px; margin:14px 0; border-radius:999px; }
+    progress::-webkit-progress-bar { background:var(--card); border-radius:999px; }
+    progress::-webkit-progress-value { background:var(--accent); border-radius:999px; }
+    .desc-box { background:var(--card); padding:18px 18px 20px; border-radius:16px; margin-top:22px; text-align:left; white-space:pre-wrap; font-size:14px; line-height:1.6; color:var(--muted); border:1px solid var(--border); }
+    footer { text-align:center; padding:22px; color:var(--muted); font-size:12px; border-top:1px solid rgba(12,148,136,.18); font-family:"Poppins",sans-serif; }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="brand">🔍 HireShield</div>
+    <nav>
+      <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+      {% if session.admin_logged_in %}
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Dashboard</a>
+        <a href="{{ url_for('history') }}" class="btn btn-secondary">History</a>
+        <a href="{{ url_for('logout') }}" class="btn btn-danger">Logout</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="result-card">
+      <h1>Analysis Complete</h1>
+      <div class="badge {{ 'fake' if label == 'Fake Job' else 'real' }}">{{ label }}</div>
+      <div>
+        <p style="color:var(--muted);font-size:13px;margin-bottom:6px;">Confidence Level</p>
+        <progress value="{{ confidence }}" max="100"></progress>
+        <p style="text-align:right;font-size:12px;color:var(--muted);margin-top:4px;">{{ confidence }}%</p>
+      </div>
+      <div class="desc-box">{{ description }}</div>
+      <a href="/" class="btn btn-primary" style="margin-top:22px;">← Analyze Another</a>
+    </div>
+  </div>
+
+  <footer>© 2025 • HireShield • Result view by Ashwin T</footer>
+
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const current = html.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+    }
+    const saved = localStorage.getItem('theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', saved);
+  </script>
+</body>
+</html>

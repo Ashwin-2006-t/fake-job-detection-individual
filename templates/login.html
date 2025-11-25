@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<title>HireShield • Admin Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet" />
+<style>
+:root[data-theme="dark"] {
+  --bg:#020712;
+  --surface:#050b18;
+  --card:#071822;
+  --accent:#22c55e;
+  --text:#e5f9ed;
+  --muted:#7bbf8e;
+  --border:#123527;
+  --hover:#16a34a;
+  --danger:#f97316;
+}
+:root[data-theme="light"] {
+  --bg:#f4fbf7;
+  --surface:#ffffff;
+  --card:#e3f3e9;
+  --accent:#16a34a;
+  --text:#052e16;
+  --muted:#4b7c5b;
+  --border:#b6e0c2;
+  --hover:#15803d;
+  --danger:#ea580c;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:"Inter",sans-serif; background:radial-gradient(circle at top,rgba(34,197,94,.1),transparent 55%), var(--bg); color:var(--text); display:flex; align-items:center; justify-content:center; min-height:100vh; padding:24px; position:relative; }
+h1,.brand { font-family:"Poppins",sans-serif; }
+.box { background:var(--surface); width:100%; max-width:380px; padding:32px 34px; border-radius:22px; border:1px solid var(--border); box-shadow:0 26px 60px -22px rgba(0,0,0,.9); }
+.brand { font-size:22px; font-weight:600; color:var(--accent); text-align:center; margin-bottom:4px; }
+.sub { text-align:center; font-size:12px; color:var(--muted); margin-bottom:22px; text-transform:uppercase; letter-spacing:.18em; }
+label { display:block; font-weight:600; font-size:13px; margin-bottom:6px; }
+input { width:100%; padding:11px 13px; margin-bottom:16px; border-radius:14px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-size:14px; font-family:inherit; }
+input:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 1px rgba(34,197,94,.7); }
+.btn { width:100%; padding:13px; border:none; border-radius:14px; background:var(--accent); color:#fff; font-weight:600; font-size:14px; cursor:pointer; transition:.2s; font-family:"Inter",sans-serif; }
+.btn:hover { background:var(--hover); }
+.error { background:rgba(248,113,113,.08); border:1px solid var(--danger); color:var(--danger); padding:10px 12px; font-size:12px; border-radius:12px; margin-top:4px; }
+.links { text-align:center; margin-top:18px; font-size:13px; }
+.links a { color:var(--accent); text-decoration:none; }
+.links a:hover { text-decoration:underline; }
+.theme-toggle { position:absolute; top:18px; right:18px; background:var(--surface); border:1px solid var(--border); padding:7px 11px; border-radius:999px; cursor:pointer; font-size:18px; color:var(--muted); }
+.theme-toggle:hover { background:var(--card); color:var(--accent); }
+footer { position:fixed; bottom:10px; left:0; right:0; text-align:center; font-size:11px; color:var(--muted); font-family:"Poppins",sans-serif; }
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+<div class="box">
+  <div class="brand">🔐 HireShield Admin</div>
+  <div class="sub">Secure access only</div>
+  <form method="POST">
+    <label for="username">Username</label>
+    <input id="username" name="username" type="text" required />
+    <label for="password">Password</label>
+    <input id="password" name="password" type="password" required />
+    <button class="btn" type="submit">Login</button>
+    {% if error %}
+      <div class="error">⚠ {{ error }}</div>
+    {% endif %}
+  </form>
+  <div class="links">
+    <a href="/">← Back to Site</a>
+  </div>
+</div>
+<footer>© 2025 • HireShield • Admin panel by Ashwin T</footer>
+<script>
+function toggleTheme(){
+  const h=document.documentElement;
+  const nxt=h.getAttribute('data-theme')==='dark'?'light':'dark';
+  h.setAttribute('data-theme',nxt);
+  localStorage.setItem('theme',nxt);
+}
+document.documentElement.setAttribute('data-theme',localStorage.getItem('theme')||'dark');
+</script>
+</body>
+</html>

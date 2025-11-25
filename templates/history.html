@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<title>HireShield • Prediction History</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet" />
+<style>
+:root[data-theme="dark"] {
+  --bg:#020712;
+  --surface:#050b18;
+  --card:#071822;
+  --accent:#22c55e;
+  --text:#e5f9ed;
+  --muted:#7bbf8e;
+  --border:#123527;
+  --hover:#16a34a;
+  --fake:#f97316;
+  --real:#22c55e;
+}
+:root[data-theme="light"] {
+  --bg:#f4fbf7;
+  --surface:#ffffff;
+  --card:#e3f3e9;
+  --accent:#16a34a;
+  --text:#052e16;
+  --muted:#4b7c5b;
+  --border:#b6e0c2;
+  --hover:#15803d;
+  --fake:#ea580c;
+  --real:#16a34a;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:"Inter",sans-serif; background:var(--bg); color:var(--text); }
+h1,.brand { font-family:"Poppins",sans-serif; }
+.header { background:var(--surface); border-bottom:1px solid var(--border); padding:14px 24px; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:10; box-shadow:0 14px 30px rgba(0,0,0,.55); }
+.brand { font-size:20px; font-weight:600; color:var(--accent); display:flex; align-items:center; gap:8px; }
+nav { display:flex; gap:10px; align-items:center; }
+.btn { padding:9px 16px; border:none; border-radius:999px; font-weight:600; font-size:13px; cursor:pointer; background:var(--card); color:var(--text); transition:.2s; text-decoration:none; display:inline-block; font-family:"Inter",sans-serif; }
+.btn:hover { background:var(--border); }
+.btn-danger { background:var(--fake); color:#fff; }
+.btn-danger:hover { opacity:.9; }
+.theme-toggle { background:transparent; border:1px solid var(--border); padding:7px 11px; border-radius:999px; cursor:pointer; font-size:18px; color:var(--muted); }
+.theme-toggle:hover { background:var(--card); color:var(--accent); }
+.container { max-width:1100px; margin:36px auto; padding:0 24px 40px; }
+h1 { font-size:26px; margin-bottom:16px; font-weight:600; }
+.table-box { background:var(--surface); padding:22px 24px; border-radius:20px; border:1px solid var(--border); box-shadow:0 20px 50px -18px rgba(0,0,0,.7); overflow:auto; }
+table { width:100%; border-collapse:collapse; font-size:14px; }
+th, td { padding:11px 12px; text-align:left; border-bottom:1px solid var(--border); vertical-align:top; }
+th { font-size:11px; letter-spacing:.6px; text-transform:uppercase; color:var(--muted); font-weight:500; }
+tbody tr:hover { background:var(--card); }
+.badge { padding:5px 11px; border-radius:999px; font-weight:600; font-size:11px; color:#fff; display:inline-block; }
+.badge.fake { background:linear-gradient(135deg,var(--fake),#fb923c); }
+.badge.real { background:linear-gradient(135deg,var(--real),#4ade80); }
+.desc { white-space:pre-wrap; max-width:480px; }
+.empty { text-align:center; padding:24px 0; color:var(--muted); }
+footer { text-align:center; padding:26px 0 20px; font-size:12px; color:var(--muted); border-top:1px solid rgba(12,148,136,.18); font-family:"Poppins",sans-serif; }
+.pagination { margin-top:18px; display:flex; gap:10px; justify-content:center; }
+progress { width:100px; height:10px; }
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="brand">📜 HireShield History</div>
+  <nav>
+    <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+    <a href="/" class="btn">Home</a>
+    <a href="{{ url_for('admin_dashboard') }}" class="btn">Dashboard</a>
+    {% if session.admin_logged_in %}
+      <a href="{{ url_for('logout') }}" class="btn btn-danger">Logout</a>
+    {% else %}
+      <a href="{{ url_for('admin_login') }}" class="btn">Login</a>
+    {% endif %}
+  </nav>
+</header>
+
+<div class="container">
+  <h1>Prediction History</h1>
+  <div class="table-box">
+    <table>
+      <thead>
+        <tr>
+          <th>Timestamp</th>
+          <th>Prediction</th>
+          <th>Confidence</th>
+          <th>Job Description (truncated)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for job, label, conf, time in records %}
+        <tr>
+          <td style="min-width:140px;">{{ time }}</td>
+          <td><span class="badge {{ 'fake' if label=='Fake Job' else 'real' }}">{{ label }}</span></td>
+          <td>{{ conf }}%</td>
+          <td class="desc">{{ job[:160] }}{% if job|length > 160 %}...{% endif %}</td>
+        </tr>
+        {% endfor %}
+        {% if records|length == 0 %}
+        <tr><td colspan="4" class="empty">No predictions yet.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<footer>© 2025 • HireShield • History log by Ashwin T</footer>
+
+<script>
+function toggleTheme(){
+  const h=document.documentElement;
+  const nxt=h.getAttribute('data-theme')==='dark'?'light':'dark';
+  h.setAttribute('data-theme',nxt);
+  localStorage.setItem('theme',nxt);
+}
+document.documentElement.setAttribute('data-theme',localStorage.getItem('theme')||'dark');
+</script>
+</body>
+</html>
