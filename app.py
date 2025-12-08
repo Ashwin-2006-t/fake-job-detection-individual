@@ -22,6 +22,15 @@ def init_db():
             password TEXT
         );
     ''')
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS retrain_logs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            accuracy REAL,
+            training_source TEXT,
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
+    ''')
+
     cur = conn.execute("SELECT COUNT(*) FROM admin WHERE username='admin'")
     if cur.fetchone()[0] == 0:
         conn.execute("INSERT INTO admin (username, password) VALUES (?, ?)", ('admin', 'admin123'))
@@ -158,6 +167,36 @@ def admin_dashboard():
                            real=real_count,
                            dates=dates,
                            counts=counts)
+
+@app.route('/retrain', methods=['POST'])
+def retrain():
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin_login'))
+
+    # SIMULATED retraining accuracy (replace later if needed)
+    accuracy = 95.2
+    training_source = "default dataset"
+
+    # Save record in retrain_logs
+    conn = sqlite3.connect(DB_PATH)
+    conn.execute("INSERT INTO retrain_logs (accuracy, training_source) VALUES (?, ?)",
+                 (accuracy, training_source))
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/retrain_logs')
+def retrain_logs():
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin_login'))
+
+    conn = sqlite3.connect(DB_PATH)
+    rows = conn.execute("SELECT timestamp, accuracy, training_source FROM retrain_logs ORDER BY id DESC").fetchall()
+    conn.close()
+
+    return render_template('retrain_logs.html', logs=rows)
+
 
 @app.route('/logout')
 def logout():

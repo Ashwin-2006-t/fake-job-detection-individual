@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Training Logs</title>
+</head>
+<body>
+
+<h2>Model Retraining Logs</h2>
+
+<table border="1" cellpadding="10">
+    <tr>
+        <th>Date</th>
+        <th>Accuracy</th>
+        <th>Training Source</th>
+    </tr>
+
+    {% for log in logs %}
+    <tr>
+        <td>{{ log[0] }}</td>
+        <td>{{ log[1] }}%</td>
+        <td>{{ log[2] }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<br>
+<a href="/admin_dashboard">⬅ Back to Dashboard</a>
+
+</body>
+</html>
