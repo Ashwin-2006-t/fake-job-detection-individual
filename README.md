@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # JobGuard AI – Fake Job Posting Detection
 
 A beginner‑friendly project that shows how to build an end‑to‑end Machine Learning + Flask web app to classify job postings as “Fake” or “Real”. It includes data cleaning, model training, evaluation charts, and a modern UI with dark/light theme and an admin panel.
@@ -182,3 +183,6 @@ You learn:
 Start small: train → run app → predict → explore dashboard. Then iterate.
 
 Enjoy building with JobGuard AI.
+=======
+# fake-job-detection-individual
+>>>>>>> 0737d771cdb5e21314545b4cd9988c9e141fcf6d
